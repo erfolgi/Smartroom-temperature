@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".ManualFragment">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+    >
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="40.0 C"
+                  android:textSize="48sp"
+                  android:textAlignment="center"
+                  android:layout_margin="24dp"
+        />
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Last Updated\nSaturday, 12-12-12\n18:18:18"
+                  android:textSize="14sp"
+                  android:textAlignment="center"
+                  android:layout_margin="5dp"
+        />
+
+        <TableLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TableRow
+                    android:gravity="center"
+            >
+                <ImageView
+                        android:id="@+id/stat_fan"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:src="@drawable/coldfanoff"
+                />
+                <Space
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                />
+                <ImageView
+                        android:id="@+id/stat_lamp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:src="@drawable/coldlampoff"
+                />
+            </TableRow>
+            <TableRow
+                    android:gravity="center"
+            >
+                <Switch
+                        android:id="@+id/toggle_fan"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:padding="20dp"
+
+                />
+                <Space
+                        android:layout_width="75dp"
+                        android:layout_height="50dp"
+                />
+                <Switch
+                        android:id="@+id/toggle_lamp"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:padding="20dp"/>
+            </TableRow>
+        </TableLayout>
+        <Space android:layout_width="0dp" android:layout_height="0dp"
+       android:layout_weight="1"
+/>
+
+    </LinearLayout>
+
+
+</FrameLayout>

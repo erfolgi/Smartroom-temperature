@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".AutoFragment">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/gradasi"
+    >
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="AUTO"
+                  android:textSize="24sp"
+                  android:textAlignment="center"
+                  android:textColor="#fff"
+        />
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="40.0 C"
+                  android:textSize="48sp"
+                  android:textAlignment="center"
+                  android:layout_margin="10dp"
+                  android:textColor="#fff"
+        />
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Last Updated\nSaturday, 12-12-12\n18:18:18"
+                  android:textSize="14sp"
+                  android:textAlignment="center"
+                  android:layout_margin="5dp"
+                  android:textColor="#fff"
+        />
+
+        <TableLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TableRow
+                    android:gravity="center"
+            >
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Kipas:"
+                        android:textAlignment="center"
+                        android:textColor="#fff"
+                />
+                <Space android:layout_width="20dp"/>
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lampu:"
+                        android:textAlignment="center"
+                        android:textColor="#fff"
+                />
+            </TableRow>
+            <TableRow
+                    android:gravity="center"
+            >
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/nyala_34_0_c_nmati_34_0_c"
+                        android:textAlignment="center"
+                        android:textColor="#fff"
+                />
+                <Space android:layout_width="20dp"/>
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/nyala_"
+                        android:textAlignment="center"
+                        android:textColor="#fff"
+                />
+            </TableRow>
+        </TableLayout>
+        <Space android:layout_width="0dp" android:layout_height="0dp"
+               android:layout_weight="1"
+        />
+
+    </LinearLayout>
+
+</FrameLayout>

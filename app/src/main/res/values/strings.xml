@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">SensorSuhu</string>
+    <string name="gambar_background">Gambar Background</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="auto">Auto</string>
+    <string name="nyala_34_0_c_nmati_34_0_c"><![CDATA[Nyala: > 34.0 C\nMati : < 34.0 C]]></string>
+    <string name="nyala_"><![CDATA[Nyala: < 34.0 C\nMati: > 34.0 C]]></string>
+    <string name="manual">Manual</string>
 </resources>
