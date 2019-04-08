@@ -33,8 +33,10 @@
             android:text="@string/auto"
             android:id="@+id/auto_button"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="#fff"
             android:backgroundTint="@color/colorAccent"
     />
+
     <FrameLayout
 
             android:id="@+id/fragment_container"

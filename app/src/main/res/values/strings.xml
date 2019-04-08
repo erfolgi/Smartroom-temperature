@@ -8,4 +8,6 @@
     <string name="nyala_34_0_c_nmati_34_0_c"><![CDATA[Nyala: > 34.0 C\nMati : < 34.0 C]]></string>
     <string name="nyala_"><![CDATA[Nyala: < 34.0 C\nMati: > 34.0 C]]></string>
     <string name="manual">Manual</string>
+    <string name="setting">Setting</string>
+    <string name="about">About</string>
 </resources>
