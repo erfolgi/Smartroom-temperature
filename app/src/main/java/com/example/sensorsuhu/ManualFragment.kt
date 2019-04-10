@@ -8,11 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.sensorsuhu.R
+import com.example.sensorsuhu.api.ApiClient
+import com.example.sensorsuhu.api.ApiInterface
+import com.example.sensorsuhu.model.SuhuModel
+import com.example.sensorsuhu.model.SuhuResponse
+import com.example.sensorsuhu.presenter.ManualPresenter
+import com.example.sensorsuhu.view.ManualView
 import kotlinx.android.synthetic.main.fragment_manual.*
 import kotlinx.android.synthetic.main.fragment_manual.view.*
+import retrofit2.Call
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-class ManualFragment : Fragment() {
+class ManualFragment : Fragment(), ManualView {
+
+    lateinit var manualPresenter: ManualPresenter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,8 +47,32 @@ class ManualFragment : Fragment() {
                 Glide.with(this@ManualFragment).load(R.drawable.coldlampoff).into(stat_lamp)
             }
         }
+        val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        val call : Call<SuhuResponse> = apiInterface.getSuhuItem()
+        manualPresenter = ManualPresenter(call, this, context!!)
+        manualPresenter.getManualSuhuItem()
         return view
     }
 
+    override fun showItemSuhu(listSuhu: ArrayList<SuhuModel>) {
+        var lastSuhu = listSuhu.last()
+        tv_manualsuhu.text = lastSuhu.field_1.toString() + " C"
+
+        var date : String = lastSuhu.date_time!!
+        var slicedDate1 = date.replace("T"," ")
+        var slicedDate2 = slicedDate1.replace("Z","")
+
+        val dateConvert = gmtFormat(slicedDate2)
+        val formatDate = SimpleDateFormat("E, dd-MM-yyyy\nHH:mm:ss", Locale(slicedDate2))
+        val formatedDate = formatDate.format(dateConvert)
+        tv_manualdate.text = formatedDate
+    }
+
+    fun gmtFormat(dateP : String?) : Date?{
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale(dateP))
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
+        val dateFormatted = "$dateP"
+        return formatter.parse(dateFormatted)
+    }
 
 }

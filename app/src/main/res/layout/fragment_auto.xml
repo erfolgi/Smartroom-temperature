@@ -19,19 +19,29 @@
         />
         <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="40.0 C"
+                  tools:text="40.0 C"
                   android:textSize="48sp"
                   android:textAlignment="center"
                   android:layout_margin="10dp"
                   android:textColor="#fff"
+                  android:id="@+id/tv_autosuhu"
         />
         <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="Last Updated\nSaturday, 12-12-12\n18:18:18"
+                  android:text="Last Updated"
                   android:textSize="14sp"
                   android:textAlignment="center"
                   android:layout_margin="5dp"
                   android:textColor="#fff"
+        />
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  tools:text="Saturday, 12-12-12\n18:18:18"
+                  android:textSize="14sp"
+                  android:textAlignment="center"
+                  android:layout_margin="5dp"
+                  android:textColor="#fff"
+                  android:id="@+id/tv_autodate"
         />
 
         <TableLayout android:layout_width="match_parent" android:layout_height="wrap_content">
