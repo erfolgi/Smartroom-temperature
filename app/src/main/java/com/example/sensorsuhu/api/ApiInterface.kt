@@ -7,7 +7,6 @@ import retrofit2.http.GET
 
 
 
-
 interface ApiInterface{
     @GET("channels/740883/field/1.json")
     fun getSuhuItem() : Call<SuhuResponse>
