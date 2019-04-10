@@ -38,16 +38,16 @@ class AutoFragment : Fragment(), AutoView {
 
     override fun showItemSuhu(listSuhu: ArrayList<SuhuModel>) {
         var lastSuhu = listSuhu.last()
-        tv_suhuAuto.text = lastSuhu.field_1.toString() + " C"
+        tv_autosuhu.text = lastSuhu.field_1.toString() + " C"
 
-        var date : String = lastSuhu.dateTime!!
+        var date : String = lastSuhu.date_time!!
         var slicedDate1 = date.replace("T"," ")
         var slicedDate2 = slicedDate1.replace("Z","")
 
         val timeConvert = gmtFormat(slicedDate2)
         val formatDate = SimpleDateFormat("E, dd-MM-yyyy\nHH:mm:ss", Locale(slicedDate2))
         val dateParsed = formatDate.format(timeConvert)
-        tv_datetimeAuto.text = dateParsed
+        tv_autodate.text = dateParsed
     }
 
     fun gmtFormat(dateP : String?) : Date?{
