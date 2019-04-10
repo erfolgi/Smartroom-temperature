@@ -1,9 +1,13 @@
 package com.example.sensorsuhu.presenter
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import com.example.sensorsuhu.api.ApiClient
+import com.example.sensorsuhu.api.ApiInterface
 import com.example.sensorsuhu.model.SuhuModel
 import com.example.sensorsuhu.model.SuhuResponse
+import com.example.sensorsuhu.model.WriteResponse
 import com.example.sensorsuhu.view.ManualView
 import retrofit2.Call
 import retrofit2.Callback
@@ -14,6 +18,8 @@ class ManualPresenter(private val call : Call<SuhuResponse>,
                       private val context: Context){
     fun getManualSuhuItem(){
         var listSuhu : ArrayList<SuhuModel>
+        val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        val call : Call<SuhuResponse> = apiInterface.getSuhuItem()
         call.enqueue(object : Callback<SuhuResponse>{
             override fun onFailure(call: Call<SuhuResponse>, t: Throwable) {
                 Toast.makeText(context, "Gagal ambil item", Toast.LENGTH_SHORT).show()
@@ -27,5 +33,27 @@ class ManualPresenter(private val call : Call<SuhuResponse>,
             }
 
         })
+    }
+
+    fun PostData(f1: String, f2: String, f3: String, f4: String, f5: String){
+        val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        val call : Call<WriteResponse> = apiInterface.requestWrite("MEXGF0FJU7KARF27",f1,f2,f3,f4,f5)
+
+        call.enqueue(object : Callback<WriteResponse>{
+            override fun onResponse(call: Call<WriteResponse>, response: Response<WriteResponse>) {
+                try {
+                    Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                    Log.e("test 4", response.body()!!.field4.toString())
+                    Log.e("test 5", response.body()!!.field5.toString())
+                    getManualSuhuItem()
+                }catch (e : Exception){}
+            }
+
+            override fun onFailure(call: Call<WriteResponse>, t: Throwable) {
+                Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
     }
 }
