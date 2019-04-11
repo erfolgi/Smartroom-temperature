@@ -8,4 +8,18 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ColdTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#039be5</item>
+        <item name="colorPrimaryDark">#006db3</item>
+        <item name="colorAccent">#63ccff</item>
+    </style>
+
+    <style name="HotTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#c62828</item>
+        <item name="colorPrimaryDark">#8e0000</item>
+        <item name="colorAccent">#ff5f52</item>
+    </style>
+
 </resources>

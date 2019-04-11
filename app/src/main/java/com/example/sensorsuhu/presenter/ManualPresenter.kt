@@ -18,9 +18,10 @@ class ManualPresenter(private val call : Call<SuhuResponse>,
                       private val context: Context){
     fun getManualSuhuItem(){
         var listSuhu : ArrayList<SuhuModel>
-        val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
-        val call : Call<SuhuResponse> = apiInterface.getSuhuItem()
-        call.enqueue(object : Callback<SuhuResponse>{
+        //val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        //val call : Call<SuhuResponse> = apiInterface.getSuhuItem()
+
+        call.clone().enqueue(object : Callback<SuhuResponse>{
             override fun onFailure(call: Call<SuhuResponse>, t: Throwable) {
                 Toast.makeText(context, "Gagal ambil item", Toast.LENGTH_SHORT).show()
             }
@@ -34,12 +35,16 @@ class ManualPresenter(private val call : Call<SuhuResponse>,
 
         })
     }
+    fun cancelCall(){
+        call.cancel()
+    }
 
     fun PostData(f1: String, f2: String, f3: String, f4: String, f5: String){
+        call.cancel()
         val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
-        val call : Call<WriteResponse> = apiInterface.requestWrite("MEXGF0FJU7KARF27",f1,f2,f3,f4,f5)
+        val calls : Call<WriteResponse> = apiInterface.requestWrite("MEXGF0FJU7KARF27",f1,f2,f3,f4,f5)
 
-        call.enqueue(object : Callback<WriteResponse>{
+        calls.enqueue(object : Callback<WriteResponse>{
             override fun onResponse(call: Call<WriteResponse>, response: Response<WriteResponse>) {
                 try {
                     Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()

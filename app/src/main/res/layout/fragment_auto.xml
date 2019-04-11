@@ -5,10 +5,11 @@
              android:layout_height="match_parent"
              tools:context=".AutoFragment">
     <LinearLayout
+            android:id="@+id/autolayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@drawable/gradasi"
+            android:background="@color/colorPrimaryDark"
     >
         <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
@@ -86,6 +87,19 @@
         </TableLayout>
         <Space android:layout_width="0dp" android:layout_height="0dp"
                android:layout_weight="1"
+        />
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/swipe_down_for_manual_mode"
+                  android:textColor="#fff"
+                  android:textSize="14sp"
+                  android:textAlignment="center"
+                  android:layout_marginBottom="10dp"
+        />
+        <ImageView android:layout_width="match_parent"
+                   android:layout_height="18dp"
+                   android:src="@drawable/swipedown"
+                   android:layout_marginBottom="20dp"
         />
 
     </LinearLayout>
