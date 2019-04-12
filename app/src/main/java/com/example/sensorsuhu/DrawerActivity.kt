@@ -229,11 +229,13 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_settings -> {
-                // Handle the camera action
-            }
+//            R.id.nav_settings -> {
+//                // Handle the camera action
+//            }
             R.id.nav_about -> {
-
+                val mAboutFragment = AboutFragment()
+                val mFragmentManager = supportFragmentManager
+                mAboutFragment.show(mFragmentManager, AboutFragment::class.java!!.simpleName)
             }
         }
 
