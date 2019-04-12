@@ -22,7 +22,7 @@ import java.util.*
 
 class AutoFragment : Fragment(){
 
-    lateinit var myactivity: MainActivity
+    lateinit var myactivity: DrawerActivity
     lateinit var f1: String
     lateinit var f2: String
     lateinit var f3: String
@@ -38,12 +38,16 @@ class AutoFragment : Fragment(){
         viewed = inflater.inflate(R.layout.fragment_auto, container, false)
         //
         showSuhu()
+        viewed.setOnClickListener {
+            myactivity = activity as DrawerActivity
+            myactivity.changeFragment("manual")
+        }
         return viewed
     }
 
      @SuppressLint("SetTextI18n")
      fun showSuhu() {
-         myactivity = activity as MainActivity
+         myactivity = activity as DrawerActivity
          val lastSuhu = myactivity.getFromActivity()
          f1=lastSuhu.field_1.toString()
          f2=lastSuhu.field_2.toString()
@@ -65,13 +69,13 @@ class AutoFragment : Fragment(){
          val f1f=f1.toFloat()
          when {
              f1f in 25.0..30.0 -> {
-                 viewed.autolayout.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
+                 viewed.autolayout.background=(resources.getDrawable(R.drawable.gradasi))
              }
              f1f>30 -> {
-                 viewed.autolayout.setBackgroundColor(resources.getColor(R.color.hotNav))
+                 viewed.autolayout.background=(resources.getDrawable(R.drawable.gradasihot))
              }
              f1f<25 -> {
-                 viewed.autolayout.setBackgroundColor(resources.getColor(R.color.coldNav))
+                 viewed.autolayout.background=(resources.getDrawable(R.drawable.gradasicold))
              }
          }
     }

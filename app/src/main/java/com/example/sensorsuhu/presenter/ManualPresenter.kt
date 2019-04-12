@@ -20,6 +20,7 @@ class ManualPresenter(private val call : Call<SuhuResponse>,
         var listSuhu : ArrayList<SuhuModel>
         //val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
         //val call : Call<SuhuResponse> = apiInterface.getSuhuItem()
+        call.cancel()
 
         call.clone().enqueue(object : Callback<SuhuResponse>{
             override fun onFailure(call: Call<SuhuResponse>, t: Throwable) {
@@ -48,8 +49,6 @@ class ManualPresenter(private val call : Call<SuhuResponse>,
             override fun onResponse(call: Call<WriteResponse>, response: Response<WriteResponse>) {
                 try {
                     Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
-                    Log.e("test 4", response.body()!!.field4.toString())
-                    Log.e("test 5", response.body()!!.field5.toString())
                     getManualSuhuItem()
                 }catch (e : Exception){}
             }

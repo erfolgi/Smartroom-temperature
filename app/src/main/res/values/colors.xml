@@ -3,7 +3,13 @@
     <color name="colorPrimary">#33691e</color>
     <color name="colorPrimaryDark">#003d00</color>
     <color name="colorAccent">#629749</color>
-    <color name="coldNav">#006db3</color>
-    <color name="hotNav">#8e0000</color>
+
+    <color name="coldNav">#004D79</color>
+    <color name="coldPrimary">#039be5</color>
+    <color name="coldAccent">#63ccff</color>
+
+    <color name="hotNav">#5A0000</color>
+    <color name="hotPrimary">#c62828</color>
+    <color name="hotAccent">#ff5f52</color>
 
 </resources>

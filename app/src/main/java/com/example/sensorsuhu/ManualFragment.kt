@@ -25,7 +25,7 @@ import java.util.*
 class ManualFragment : Fragment() {
 
     //lateinit var manualPresenter: ManualPresenter
-    lateinit var myactivity: MainActivity
+    lateinit var myactivity: DrawerActivity
     lateinit var f1: String
     lateinit var f2: String
     lateinit var f3: String
@@ -60,12 +60,17 @@ class ManualFragment : Fragment() {
 //                manualPresenter.PostData(f1,f2,f3,"0.00",f5)
             }
         }
+
+        viewed.auto_buttons.setOnClickListener {
+            myactivity = activity as DrawerActivity
+            myactivity.changeFragment("auto")
+        }
         return viewed
     }
 
     @SuppressLint("SetTextI18n")
     fun getItemSuhu() {
-        myactivity = activity as MainActivity
+        myactivity = activity as DrawerActivity
         val lastSuhu = myactivity.getFromActivity()
 
         viewed.tv_manualsuhu.text = lastSuhu.field_1.toString() + "\u00B0C"
