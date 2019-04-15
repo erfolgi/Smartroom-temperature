@@ -198,10 +198,15 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         fragment_container.setOnTouchListener(object: OnSwipeTouchListener(this){
             override fun onSwipeUp() {
-                changeFragment("auto")
+                if(autoMode == false){
+                    changeFragment("auto")
+                }
+
             }
             override fun onSwipeDown() {
+                if(autoMode == true){
                 changeFragment("manual")
+                }
             }
         })
     }
