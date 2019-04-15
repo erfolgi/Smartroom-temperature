@@ -38,7 +38,7 @@ class AutoFragment : Fragment(){
         viewed = inflater.inflate(R.layout.fragment_auto, container, false)
         //
         showSuhu()
-        viewed.setOnClickListener {
+        viewed.manual_button.setOnClickListener {
             myactivity = activity as DrawerActivity
             myactivity.changeFragment("manual")
         }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="wrap_content"
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:gravity="bottom"
               android:orientation="vertical"
@@ -14,7 +14,7 @@
             android:text="Smart Room:"
             android:textStyle="bold"
             android:textColor="#000"
-            android:textSize="24sp"
+            android:textSize="18sp"
     />
 
     <TextView
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textColor="@color/coldNav"
-            android:textSize="24sp"
+            android:textSize="18sp"
             android:text="Temperature" />
     <Space android:layout_width="1dp" android:layout_height="12dp"/>
 </LinearLayout>

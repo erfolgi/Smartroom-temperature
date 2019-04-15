@@ -60,7 +60,7 @@ open class OnSwipeTouchListener(c: Context) : View.OnTouchListener {
                     if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
                         if (diffY > 0) {
                             onSwipeDown()
-                        } else {
+                        } else if (diffY < 0){
                             onSwipeUp()
                         }
                     }
