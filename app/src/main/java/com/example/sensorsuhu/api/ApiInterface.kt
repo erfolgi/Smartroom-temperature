@@ -11,7 +11,7 @@ import retrofit2.http.POST
 
 
 interface ApiInterface{
-    @GET("channels/740883/feeds.json?results=1")
+    @GET("channels/740883/feeds.json?results=5")
     fun getSuhuItem() : Call<SuhuResponse>
 
     @POST("update.json")

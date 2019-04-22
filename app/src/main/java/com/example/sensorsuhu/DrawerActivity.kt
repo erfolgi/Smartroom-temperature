@@ -36,8 +36,10 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     lateinit var f3 : String
     lateinit var f4 : String
     lateinit var f5 : String
+    lateinit var listGraph : ArrayList<SuhuModel>
 
     override fun showItemSuhu(listSuhu: ArrayList<SuhuModel>) {
+        listGraph = listSuhu
         val listSuhu = listSuhu.last()
         listData = listSuhu
 
@@ -111,7 +113,9 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     public fun getFromActivity (): SuhuModel {
         return listData
     }
-
+    public fun getGraphs (): ArrayList<SuhuModel> {
+        return listGraph
+    }
     public fun changeFragment (name : String){
         if (name=="auto"){
             autoMode = true
@@ -234,9 +238,11 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-//            R.id.nav_settings -> {
-//                // Handle the camera action
-//            }
+            R.id.nav_graph -> {
+                val mGraphFragment = GraphFragment()
+                val mFragmentManager = supportFragmentManager
+                mGraphFragment.show(mFragmentManager, GraphFragment::class.java!!.simpleName)
+            }
             R.id.nav_about -> {
                 val mAboutFragment = AboutFragment()
                 val mFragmentManager = supportFragmentManager

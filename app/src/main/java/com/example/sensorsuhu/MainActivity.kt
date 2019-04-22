@@ -38,11 +38,12 @@ class MainActivity : AppCompatActivity(), ManualView{
     lateinit var f3 : String
     lateinit var f4 : String
     lateinit var f5 : String
+    lateinit var listGraph : java.util.ArrayList<SuhuModel>
 
     override fun showItemSuhu(listSuhu: ArrayList<SuhuModel>) {
+        listGraph = listSuhu
         val listSuhu = listSuhu.last()
         listData = listSuhu
-
         f1= listSuhu.field_1!!.toFloat()
         f2 =listSuhu.field_2.toString()
         f3=listSuhu.field_3.toString()
@@ -112,6 +113,9 @@ class MainActivity : AppCompatActivity(), ManualView{
 
     public fun getFromActivity (): SuhuModel {
         return listData
+    }
+    public fun getGraphs (): ArrayList<SuhuModel> {
+        return listGraph
     }
 
     public fun changeFragment (name : String){
