@@ -98,7 +98,7 @@ class ManualFragment : Fragment() {
         }else if (f5=="1"){
             viewed.toggle_lamp.isChecked=true
         }
-         Toast.makeText(context,"refreshed", LENGTH_SHORT).show()
+
 //        mHandler.postDelayed(refresher, 10000)
         //
         val fanbefore = viewed.stat_fan.drawable

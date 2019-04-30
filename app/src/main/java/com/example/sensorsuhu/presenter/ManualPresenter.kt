@@ -16,12 +16,35 @@ import retrofit2.Response
 class ManualPresenter(private val call : Call<SuhuResponse>,
                       private val manualView: ManualView,
                       private val context: Context){
+    var update="0"
+    fun getLastUpdate(){
+        call.cancel()
+        call.clone().enqueue(object : Callback<SuhuResponse>{
+            override fun onFailure(call: Call<SuhuResponse>, t: Throwable) {
+                Toast.makeText(context, "Koneksi gagal", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(call: Call<SuhuResponse>, response: Response<SuhuResponse>) {
+                val getchannel= response.body()!!.feeds
+                val getupdate=getchannel[0].date_time
+                Log.d("updater",getupdate.toString())
+                if (getupdate==update){
+                    //Do Nothing
+                    manualView.reupdate()
+                }else{
+                    Log.d("updater",getupdate.toString())
+                    update= getupdate!!
+                    getManualSuhuItem()
+                }
+            }
+
+        })
+    }
     fun getManualSuhuItem(){
         var listSuhu : ArrayList<SuhuModel>
-        //val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
-        //val call : Call<SuhuResponse> = apiInterface.getSuhuItem()
+        val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+        val call : Call<SuhuResponse> = apiInterface.getSuhuItem()
         call.cancel()
-
         call.clone().enqueue(object : Callback<SuhuResponse>{
             override fun onFailure(call: Call<SuhuResponse>, t: Throwable) {
                 Toast.makeText(context, "Gagal ambil item", Toast.LENGTH_SHORT).show()

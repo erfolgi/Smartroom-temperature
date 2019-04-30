@@ -14,6 +14,9 @@ interface ApiInterface{
     @GET("channels/740883/feeds.json?results=5")
     fun getSuhuItem() : Call<SuhuResponse>
 
+    @GET("channels/740883/fields/0.json?results=1")
+    fun getLastDate() : Call<SuhuResponse>
+
     @POST("update.json")
     @FormUrlEncoded
     fun requestWrite(@Field("api_key") key:String?="MEXGF0FJU7KARF27",

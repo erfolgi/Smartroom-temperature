@@ -106,10 +106,13 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 .replace(R.id.fragment_container, ManualFragment(), AutoFragment::class.java.simpleName)
                 .commit()
         }
-        Toast.makeText(this,"Refreshed", Toast.LENGTH_SHORT).show()
-        mHandler.postDelayed(refresher, 10000)
+       // Toast.makeText(this, "update", Toast.LENGTH_SHORT).show()
+        mHandler.postDelayed(refresher, 5000)
     }
-
+    override fun reupdate() {
+        //Toast.makeText(this, "no update", Toast.LENGTH_SHORT).show()
+        mHandler.postDelayed(refresher, 5000)
+    }
     public fun getFromActivity (): SuhuModel {
         return listData
     }
@@ -147,7 +150,8 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         manualPresenter.PostData(f1,f2,f3,f4,f5)
     }
     private val refresher = Runnable {
-        manualPresenter.getManualSuhuItem()
+        manualPresenter.getLastUpdate()
+
         //Toast.makeText(this@MainActivity,"Delay", LENGTH_SHORT).show()
     }//runnable
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -166,7 +170,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         //////// Use This
         val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
-        val call : Call<SuhuResponse> = apiInterface.getSuhuItem()
+        val call : Call<SuhuResponse> = apiInterface.getLastDate()
         manualPresenter = ManualPresenter(call, this, this)
 
         this.mHandler = Handler()
