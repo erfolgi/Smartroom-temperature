@@ -1,0 +1,122 @@
+{
+  "project_info": {
+    "project_number": "397432427542",
+    "firebase_url": "https://smartroom-48ba6.firebaseio.com",
+    "project_id": "smartroom-48ba6",
+    "storage_bucket": "smartroom-48ba6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397432427542:android:1b37a0bafbe5bd3d",
+        "android_client_info": {
+          "package_name": "com.example.sensorsuhu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "397432427542-tfrciccp250858fsv38amnsb8p7sbmlb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sensorsuhu",
+            "certificate_hash": "f3eca48fe6c1ba200ac83e04aa99f972601158fc"
+          }
+        },
+        {
+          "client_id": "397432427542-ku1kl541vqidq1ref18f9tuo2f1vfgg6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkHzgUQeNjpHN92vvdEJZTIG1kZN-Y5ac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "397432427542-ku1kl541vqidq1ref18f9tuo2f1vfgg6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397432427542:android:a7bbf79e00436b53",
+        "android_client_info": {
+          "package_name": "io.mdcom.smartroom.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "397432427542-ca6i9l969n2btpf1eh4bj0oeri3qhrns.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.mdcom.smartroom.app",
+            "certificate_hash": "f3eca48fe6c1ba200ac83e04aa99f972601158fc"
+          }
+        },
+        {
+          "client_id": "397432427542-ku1kl541vqidq1ref18f9tuo2f1vfgg6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkHzgUQeNjpHN92vvdEJZTIG1kZN-Y5ac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "397432427542-ku1kl541vqidq1ref18f9tuo2f1vfgg6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397432427542:android:a0211282a7bbee10",
+        "android_client_info": {
+          "package_name": "io.mdcom.smarttemp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "397432427542-u82jud46grc5q34jqitetn7arnruhae2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.mdcom.smarttemp",
+            "certificate_hash": "f3eca48fe6c1ba200ac83e04aa99f972601158fc"
+          }
+        },
+        {
+          "client_id": "397432427542-ku1kl541vqidq1ref18f9tuo2f1vfgg6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkHzgUQeNjpHN92vvdEJZTIG1kZN-Y5ac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "397432427542-ku1kl541vqidq1ref18f9tuo2f1vfgg6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

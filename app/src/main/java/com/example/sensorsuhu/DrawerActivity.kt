@@ -1,128 +1,50 @@
 package com.example.sensorsuhu
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
-import com.example.sensorsuhu.api.ApiClient
-import com.example.sensorsuhu.api.ApiInterface
-import com.example.sensorsuhu.model.SuhuModel
-import com.example.sensorsuhu.model.SuhuResponse
-import com.example.sensorsuhu.presenter.ManualPresenter
-import com.example.sensorsuhu.view.ManualView
+import com.example.sensorsuhu.model.Response
+
+import com.google.firebase.database.*
+
 import kotlinx.android.synthetic.main.activity_drawer.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_drawer.*
-import retrofit2.Call
+import java.lang.Exception
 
-class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ManualView {
-    lateinit var manualPresenter: ManualPresenter
+class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
     var autoMode = false
-    lateinit var listData: SuhuModel
+
     lateinit var mHandler: Handler
-    var f1 : Float = 0.0F
-    lateinit var f2 : String
-    lateinit var f3 : String
-    lateinit var f4 : String
-    lateinit var f5 : String
-    lateinit var listGraph : ArrayList<SuhuModel>
+    var first = true
 
-    override fun showItemSuhu(listSuhu: ArrayList<SuhuModel>) {
-        listGraph = listSuhu
-        val listSuhu = listSuhu.last()
-        listData = listSuhu
 
-        f1= listSuhu.field_1!!.toFloat()
-        f2 =listSuhu.field_2.toString()
-        f3=listSuhu.field_3.toString()
-        f4=listSuhu.field_4.toString()
-        f5=listSuhu.field_5.toString()
 
-        val before=image_background.drawable
-        when {
-            f1 in 25.0..30.0 -> {
-                textStatus.text="NORMAL"
-                Glide.with(this)
-                    .load(R.drawable.normal).apply(
-                        RequestOptions().placeholder(before))
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(image_background)
-                setTheme(R.style.AppTheme)
-                if (Build.VERSION.SDK_INT >= 21) {
-                    window.statusBarColor = resources.getColor(R.color.colorPrimaryDark)
-                }
-                auto_button.background=(resources.getDrawable(R.drawable.curved))
-            }
-            f1>30 -> {
-                textStatus.text="HOT"
-                Glide.with(this).load(R.drawable.hot).apply(
-                    RequestOptions().placeholder(before)).transition(DrawableTransitionOptions.withCrossFade()).into(image_background)
-                setTheme(R.style.HotTheme)
-                if (Build.VERSION.SDK_INT >= 21) {
-                    window.statusBarColor = resources.getColor(R.color.hotNav)
-                }
-                //auto_button.setBackgroundColor(resources.getColor(R.color.hotNav))
-                auto_button.background=(resources.getDrawable(R.drawable.curvedhot))
-            }
-            f1<25 -> {
-                textStatus.text="COLD"
-                Glide.with(this).load(R.drawable.cold).apply(
-                    RequestOptions().placeholder(before)).transition(DrawableTransitionOptions.withCrossFade()).into(image_background)
-                setTheme(R.style.ColdTheme)
-                if (Build.VERSION.SDK_INT >= 21) {
-                    window.statusBarColor = resources.getColor(R.color.coldNav)
-                }
-                //auto_button.setBackgroundColor(resources.getColor(R.color.coldNav))
-                auto_button.background=(resources.getDrawable(R.drawable.curvedcold))
-            }
-        }
+    private lateinit var ref : DatabaseReference
 
-        if (f4=="2"&&f5=="2"){
-
-            auto_button.text="Manual"
-            auto_button.visibility= View.INVISIBLE
-            autoMode = true
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, AutoFragment(), AutoFragment::class.java.simpleName)
-                .commit()
-        } else {
-            auto_button.visibility= View.INVISIBLE
-            auto_button.text="Auto"
-            autoMode = false
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, ManualFragment(), AutoFragment::class.java.simpleName)
-                .commit()
-        }
-       // Toast.makeText(this, "update", Toast.LENGTH_SHORT).show()
-        mHandler.postDelayed(refresher, 5000)
+    public fun getDB (): DatabaseReference {
+        return ref
     }
-    override fun reupdate() {
-        //Toast.makeText(this, "no update", Toast.LENGTH_SHORT).show()
-        mHandler.postDelayed(refresher, 5000)
-    }
-    public fun getFromActivity (): SuhuModel {
-        return listData
-    }
-    public fun getGraphs (): ArrayList<SuhuModel> {
-        return listGraph
-    }
+    @SuppressLint("SetTextI18n")
     public fun changeFragment (name : String){
         if (name=="auto"){
             autoMode = true
-            setCommand (f1.toString(),f2,f3,"2","2")
+            setCommandKipas(2)
+            setCommandLampu(2)
+
             auto_button.text="Manual"
             supportFragmentManager
                 .beginTransaction()
@@ -132,7 +54,8 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             auto_button.visibility= View.INVISIBLE
         }else if (name=="manual"){
             autoMode = false
-            setCommand (f1.toString(),f2,f3,"0","0")
+            setCommandKipas(0)
+            setCommandLampu(0)
             auto_button.text="Auto"
             supportFragmentManager
                 .beginTransaction()
@@ -143,16 +66,89 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
     }
 
-    public fun setCommand (f1: String,f2: String,f3: String,f4: String,f5: String){
-        manualPresenter.cancelCall()
-        mHandler.removeCallbacks(refresher)
-        mHandler.removeCallbacksAndMessages(null)
-        manualPresenter.PostData(f1,f2,f3,f4,f5)
+    public fun setCommandKipas (cmd:Int){
+        ref.child("Kipas").child("command").setValue(cmd)
+    }
+    public fun setCommandLampu (cmd:Int){
+        ref.child("Lampu").child("command").setValue(cmd)
+    }
+    @SuppressLint("SetTextI18n")
+    fun setStatus(suhu:Float, cmdkipas:Int?, cmdlampu:Int?){
+        val before=image_background.drawable
+        when {
+            suhu in 25.0..30.0 -> {
+
+                try{
+                    setTheme(R.style.AppTheme)
+                    theme.applyStyle(R.style.AppTheme, true)
+                }catch (e:Exception){
+                    Log.d("firings", "Fail $e")
+                }
+
+                textStatus.text="NORMAL"
+                Glide.with(this)
+                    .load(R.drawable.normal).apply(
+                        RequestOptions().placeholder(before))
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(image_background)
+                if (Build.VERSION.SDK_INT >= 21) {
+                    window.statusBarColor = resources.getColor(R.color.colorPrimaryDark)
+                }
+                auto_button.background=(resources.getDrawable(R.drawable.curved))
+            }
+            suhu>30 -> {
+                Log.d("firings", "Main HOT")
+                setTheme(R.style.HotTheme)
+                theme.applyStyle(R.style.HotTheme, true)
+                textStatus.text="HOT"
+                Glide.with(this).load(R.drawable.hot).apply(
+                    RequestOptions().placeholder(before)).transition(DrawableTransitionOptions.withCrossFade()).into(image_background)
+                if (Build.VERSION.SDK_INT >= 21) {
+                    window.statusBarColor = resources.getColor(R.color.hotNav)
+                }
+                //auto_button.setBackgroundColor(resources.getColor(R.color.hotNav))
+                auto_button.background=(resources.getDrawable(R.drawable.curvedhot))
+            }
+            suhu<25 -> {
+                Log.d("firings", "Main Cold")
+                setTheme(R.style.ColdTheme)
+                theme.applyStyle(R.style.ColdTheme, true)
+                textStatus.text="COLD"
+                Glide.with(this).load(R.drawable.cold).apply(
+                    RequestOptions().placeholder(before)).transition(DrawableTransitionOptions.withCrossFade()).into(image_background)
+                if (Build.VERSION.SDK_INT >= 21) {
+                    window.statusBarColor = resources.getColor(R.color.coldNav)
+                }
+                //auto_button.setBackgroundColor(resources.getColor(R.color.coldNav))
+                auto_button.background=(resources.getDrawable(R.drawable.curvedcold))
+            }
+        }
+
+        if(first){
+            if (cmdkipas==2&&cmdlampu==2){
+                auto_button.text="Manual"
+                auto_button.visibility= View.INVISIBLE
+                autoMode = true
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, AutoFragment(), AutoFragment::class.java.simpleName)
+                    .commit()
+            } else {
+                auto_button.visibility= View.INVISIBLE
+                auto_button.text="Auto"
+                autoMode = false
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, ManualFragment(), AutoFragment::class.java.simpleName)
+                    .commit()
+            }
+            first=false
+        }
+
+        // Toast.makeText(this, "update", Toast.LENGTH_SHORT).show()
     }
     private val refresher = Runnable {
-        manualPresenter.getLastUpdate()
 
-        //Toast.makeText(this@MainActivity,"Delay", LENGTH_SHORT).show()
     }//runnable
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -169,18 +165,45 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         nav_view.setNavigationItemSelectedListener(this)
 
         //////// Use This
-        val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
-        val call : Call<SuhuResponse> = apiInterface.getLastDate()
-        manualPresenter = ManualPresenter(call, this, this)
+//        val apiInterface : ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
+//        val call : Call<SuhuResponse> = apiInterface.getLastDate()
+//
+//
+//        this.mHandler = Handler()
+//        this.mHandler.post(refresher)
+        val database = FirebaseDatabase.getInstance()
+        ref = FirebaseDatabase.getInstance().reference
+        val postListener = object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                Log.d("firing ", "DataSnap: $dataSnapshot")
+                val post = dataSnapshot.getValue(Response::class.java)
 
-        this.mHandler = Handler()
-        this.mHandler.post(refresher)
+                Log.d("firing ", "Post: "+post.toString())
+                val suhuobj = post!!.Suhu
+                Log.d("firing ", "Suhu: "+suhuobj.toString())
+                val suhu = suhuobj!!.suhu!!.toFloat()
+                val kipasobj = post?.Kipas
+                val kipas = kipasobj?.command
+                val lampuobj = post?.Lampu
+                val lampu = lampuobj?.command
 
+                setStatus(suhu,kipas,lampu)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d("firing ", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
         auto_button.setOnClickListener {
-            manualPresenter.cancelCall()
+
             if(!autoMode){
                 autoMode = true
-                setCommand (f1.toString(),f2,f3,"2","2")
+                setCommandKipas(2)
+                setCommandLampu(2)
                 auto_button.text="Manual"
                 supportFragmentManager
                     .beginTransaction()
@@ -190,7 +213,8 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 auto_button.visibility= View.INVISIBLE
             }else{
                 autoMode = false
-                setCommand (f1.toString(),f2,f3,"0","0")
+                setCommandKipas(0)
+                setCommandLampu(0)
                 auto_button.text="Auto"
                 supportFragmentManager
                     .beginTransaction()
@@ -206,23 +230,26 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         fragment_container.setOnTouchListener(object: OnSwipeTouchListener(this){
             override fun onSwipeUp() {
-                if(autoMode == false){
+                if(!autoMode){
+                    setCommandKipas(2)
+                    setCommandLampu(2)
                     changeFragment("auto")
                 }
 
             }
             override fun onSwipeDown() {
-                if(autoMode == true){
+                if(autoMode){
+                    setCommandKipas(0)
+                    setCommandLampu(0)
                 changeFragment("manual")
                 }
             }
         })
+        ref.addValueEventListener(postListener)
     }
     override fun onResume() {
         super.onResume()
-        mHandler.removeCallbacks(refresher)
-        mHandler.removeCallbacksAndMessages(null)
-        this.mHandler.post(refresher)
+
 
     }
     override fun onBackPressed() {

@@ -2,22 +2,23 @@ package com.example.sensorsuhu
 
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.sensorsuhu.model.Response
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+
 import kotlinx.android.synthetic.main.fragment_manual.*
 import kotlinx.android.synthetic.main.fragment_manual.view.*
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,26 +27,83 @@ class ManualFragment : Fragment() {
 
     //lateinit var manualPresenter: ManualPresenter
     lateinit var myactivity: DrawerActivity
-    lateinit var f1: String
-    lateinit var f2: String
-    lateinit var f3: String
-    lateinit var f4: String
-    lateinit var f5: String
+//    lateinit var f1: String
+//    lateinit var f2: String
+//    lateinit var f3: String
+//    lateinit var f4: String
+//    lateinit var f5: String
     lateinit var viewed : View
     //lateinit var mHandler: Handler
+    var first = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         viewed = inflater.inflate(R.layout.fragment_manual, container, false)
-        getItemSuhu()
+        //getItemSuhu()
+        myactivity = activity as DrawerActivity
+        val ref=myactivity.getDB()
+        val postListener = object : ValueEventListener {
+
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val post = dataSnapshot.getValue(Response::class.java)
+                // ...
+
+                val suhuobj = post?.Suhu
+                val kipasobj = post?.Kipas
+                val lampuobj = post?.Lampu
+                val suhu = suhuobj?.suhu!!.toFloat()
+                val tgl=suhuobj.date
+                // suhu_tx.text= suhu.toString()+"C"
+                viewed.tv_manualsuhu.text = "$suhu\u00B0C"
+                viewed.tv_manualdate.text=tgl
+
+
+
+                if(first){
+                    val kipas = kipasobj?.command
+                    if (kipas==0){
+                        viewed.toggle_fan.isChecked=false
+                    }else if (kipas==1){
+                        viewed.toggle_fan.isChecked=true
+                    }
+                    val lampu = lampuobj?.command
+                    if (lampu==0){
+                        viewed.toggle_lamp.isChecked=false
+                    }else if (lampu==1){
+                        viewed.toggle_lamp.isChecked=true
+                    }
+
+                    first=false
+                }
+                val statkipas = kipasobj?.status
+                val statlampu = lampuobj?.status
+
+                try {
+                    setStatus(statkipas,statlampu,suhu)
+                }catch (e:Exception){
+
+                }
+
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d("firing ", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        ref.addValueEventListener(postListener)
+        //////////////////////////////////////////////////////////////////////
         viewed.toggle_lamp.setOnClickListener {
             if(toggle_lamp.isChecked){
-                myactivity.setCommand(f1,f2,f3,f4,"1.00")
+
+                myactivity.setCommandLampu(1)
 //                manualPresenter.PostData(f1,f2,f3,f4,"1.00")
             }else{
-                myactivity.setCommand(f1,f2,f3,f4,"0.00")
+                myactivity.setCommandLampu(0)
 //                manualPresenter.PostData(f1,f2,f3,f4,"0.00")
             }
         }
@@ -53,10 +111,10 @@ class ManualFragment : Fragment() {
 //            mHandler.removeCallbacks(refresher)
 //            mHandler.removeCallbacksAndMessages(null)
             if(toggle_fan.isChecked){
-                myactivity.setCommand(f1,f2,f3,"1.00",f5)
+                myactivity.setCommandKipas(1)
 //                manualPresenter.PostData(f1,f2,f3,"1.00",f5)
             }else{
-                myactivity.setCommand(f1,f2,f3,"0.00",f5)
+                myactivity.setCommandKipas(0)
 //                manualPresenter.PostData(f1,f2,f3,"0.00",f5)
             }
         }
@@ -68,112 +126,84 @@ class ManualFragment : Fragment() {
         return viewed
     }
 
-    @SuppressLint("SetTextI18n")
-    fun getItemSuhu() {
-        myactivity = activity as DrawerActivity
-        val lastSuhu = myactivity.getFromActivity()
-
-        viewed.tv_manualsuhu.text = lastSuhu.field_1.toString() + "\u00B0C"
-        f1=lastSuhu.field_1.toString()
-        f2=lastSuhu.field_2.toString()
-        f3=lastSuhu.field_3.toString()
-        f4=lastSuhu.field_4.toString()
-        f5=lastSuhu.field_5.toString()
-
-        val date : String = lastSuhu?.date_time!!
-        val slicedDate1 : String = date.replace("T"," ")
-        val slicedDate2 : String = slicedDate1.replace("Z","")
-        val dateConvert = gmtFormat(slicedDate2)
-        val formatDate = SimpleDateFormat("E, dd-MM-yyyy\nHH:mm:ss", Locale(slicedDate2))
-        val formattedDate = formatDate.format(dateConvert)
-        viewed.tv_manualdate.text = formattedDate
-
-        if (f4=="0"){
-            viewed.toggle_fan.isChecked=false
-        }else if (f4=="1"){
-            viewed.toggle_fan.isChecked=true
-        }
-        if (f5=="0"){
-            viewed.toggle_lamp.isChecked=false
-        }else if (f5=="1"){
-            viewed.toggle_lamp.isChecked=true
-        }
-
-//        mHandler.postDelayed(refresher, 10000)
-        //
+    fun setStatus(statkipas:Int? , statlampu:Int?, suhu:Float) {
         val fanbefore = viewed.stat_fan.drawable
         val lampbefore = viewed.stat_lamp.drawable
-        val f1f=f1.toFloat()
+        Log.d("firing ", "Status Fragment"+suhu)
+
         when {
-            f1f in 25.0..30.0 -> {
-                if (f2=="0"){
+            suhu in 25.0..30.0 -> {
+                Log.d("firing ", "Status Fragment Norm")
+                if (statkipas==0){
                     Glide.with(this@ManualFragment).load(R.drawable.normfanoff)
                         .apply(RequestOptions().placeholder(fanbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_fan)
-                }else if (f2=="1"){
+                }else if (statkipas==1){
                     Glide.with(this@ManualFragment).load(R.drawable.normfanon)
                         .apply(RequestOptions().placeholder(fanbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_fan)
                 }
 
-                if (f3=="0"){
+                if (statlampu==0){
                     Glide.with(this@ManualFragment).load(R.drawable.normlampoff)
                         .apply(RequestOptions().placeholder(lampbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_lamp)
-                }else if (f3=="1"){
+                }else if (statlampu==1){
                     Glide.with(this@ManualFragment).load(R.drawable.normlampon)
                         .apply(RequestOptions().placeholder(lampbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_lamp)
                 }
             }
-            f1f>30 -> {
-                if (f2=="0"){
+            suhu>30 -> {
+                Log.d("firing ", "Status Fragment Hot")
+                if (statkipas==0){
                     Glide.with(this@ManualFragment).load(R.drawable.hotfanoff)
                         .apply(RequestOptions().placeholder(fanbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_fan)
-                }else if (f2=="1"){
+                }else if (statkipas==1){
                     Glide.with(this@ManualFragment).load(R.drawable.hotfanon)
                         .apply(RequestOptions().placeholder(fanbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_fan)
                 }
 
-                if (f3=="0"){
+                if (statlampu==0){
                     Glide.with(this@ManualFragment).load(R.drawable.hotlampoff)
                         .apply(RequestOptions().placeholder(lampbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_lamp)
-                }else if (f3=="1"){
+                }else if (statlampu==1){
                     Glide.with(this@ManualFragment).load(R.drawable.hotlampon)
                         .apply(RequestOptions().placeholder(lampbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_lamp)
                 }
             }
-            f1f<25 -> {
-                if (f2=="0"){
+            suhu<25 -> {
+                Log.d("firing ", "Status Fragment Cold")
+                if (statkipas==0){
                     Glide.with(this@ManualFragment).load(R.drawable.coldfanoff)
                         .apply(RequestOptions().placeholder(fanbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_fan)
-                }else if (f2=="1"){
+                }else if (statkipas==1){
                     Glide.with(this@ManualFragment).load(R.drawable.coldfanon)
                         .apply(RequestOptions().placeholder(fanbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_fan)
                 }
 
-                if (f3=="0"){
+                if (statlampu==0){
                     Glide.with(this@ManualFragment).load(R.drawable.coldlampoff)
                         .apply(RequestOptions().placeholder(lampbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(viewed.stat_lamp)
-                }else if (f3=="1"){
+                }else if (statlampu==1){
                     Glide.with(this@ManualFragment).load(R.drawable.coldlampon)
                         .apply(RequestOptions().placeholder(lampbefore))
                         .transition(DrawableTransitionOptions.withCrossFade())
@@ -184,17 +214,19 @@ class ManualFragment : Fragment() {
         //////////////////
 
         when {
-            f1f in 25.0..30.0 -> {
+            suhu in 25.0..30.0 -> {
                 viewed.auto_buttons.background=(resources.getDrawable(R.drawable.curved))
             }
-            f1f>30 -> {
+            suhu>30 -> {
                 viewed.auto_buttons.background=(resources.getDrawable(R.drawable.curvedhot))
             }
-            f1f<25 -> {
+            suhu<25 -> {
                 viewed.auto_buttons.background=(resources.getDrawable(R.drawable.curvedcold))
             }
         }
     }
+
+
 
     fun gmtFormat(dateP : String?) : Date?{
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale(dateP))

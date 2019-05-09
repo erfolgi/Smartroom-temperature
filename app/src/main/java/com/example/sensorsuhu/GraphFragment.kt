@@ -1,28 +1,35 @@
 package com.example.sensorsuhu
 
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.sensorsuhu.model.Response
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
+import kotlinx.android.synthetic.main.fragment_graph.*
+
 import kotlinx.android.synthetic.main.fragment_graph.view.*
-import kotlinx.android.synthetic.main.fragment_manual.view.*
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class GraphFragment : DialogFragment() {
+    lateinit var h1 : String
+    lateinit var h2 : String
+    lateinit var h3 : String
+    lateinit var h4 : String
+    lateinit var h5 : String
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -31,50 +38,66 @@ class GraphFragment : DialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_graph, container, false)
 
-        var datearray: ArrayList<Date> = ArrayList(5)
+        var myactivity = activity as DrawerActivity
+        val ref=myactivity.getDB()
+        val postListener = object : ValueEventListener {
 
-        val myactivity = activity as DrawerActivity
-        val lastSuhu = myactivity.getGraphs()
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val post = dataSnapshot.getValue(Response::class.java)
+                // ...
 
-        for (i in 0..4){
-            val date : String = lastSuhu[i].date_time!!
-            val slicedDate1 : String = date.replace("T"," ")
-            val slicedDate2 : String = slicedDate1.replace("Z","")
-            val dateConvert:Date = gmtFormat(slicedDate2)
-            val formatDate = SimpleDateFormat("HH.mm", Locale(slicedDate2))
-            val formattedDate= formatDate.format(dateConvert)
-            val doubledate=formattedDate.toDouble()
-            datearray.add(i,dateConvert)
+                val historyobj = post?.History
+                h1= historyobj!!.H1!!.suhu!!
+                h2= historyobj!!.H2!!.suhu!!
+                h3= historyobj!!.H3!!.suhu!!
+                h4= historyobj!!.H4!!.suhu!!
+                h5= historyobj!!.H5!!.suhu!!
 
-            //[i]=dateConvert
+                tv_h1.text=historyobj!!.H1!!.date!!.toString()
+                tv_h2.text=historyobj!!.H2!!.date!!.toString()
+                tv_h3.text=historyobj!!.H3!!.date!!.toString()
+                tv_h4.text=historyobj!!.H4!!.date!!.toString()
+                tv_h5.text=historyobj!!.H5!!.date!!.toString()
 
-        }
-        Log.d("updated",datearray.toString())
-        Log.d("updated",lastSuhu[2].field_1!!.toDouble().toString())
 
-        view.graph.removeAllSeries()
-        val series = LineGraphSeries<DataPoint>(
-            arrayOf<DataPoint>(
-                DataPoint(datearray[0], lastSuhu[0].field_1!!.toDouble()),
-                DataPoint(datearray[1], lastSuhu[1].field_1!!.toDouble()),
-                DataPoint(datearray[2], lastSuhu[2].field_1!!.toDouble())
+                //suhu = suhuobj?.suhu!!.toFloat()
+                // suhu_tx.text= suhu.toString()+"C"
+                //viewed.tv_manualsuhu.text = "$suhu\u00B0C"
+
+                view.graph.removeAllSeries()
+                val series = LineGraphSeries<DataPoint>(
+                    arrayOf<DataPoint>(
+                        DataPoint(0.0, h5.toDouble()),
+                        DataPoint(1.0, h4.toDouble()),
+                        DataPoint(2.0, h3.toDouble()),
+                        DataPoint(3.0, h2.toDouble()),
+                        DataPoint(4.0, h1.toDouble())
 //                DataPoint(datearray[3], lastSuhu[3].field_1!!.toDouble())
 //                DataPoint(datearray[4], lastSuhu[4].field_1!!.toDouble())
-            )
-        )
-        view.graph.addSeries(series)
-        view.graph.gridLabelRenderer.labelFormatter = DateAsXAxisLabelFormatter(activity);
-        view.graph.gridLabelRenderer.numHorizontalLabels = 3; // only 4 because of the space
+                    )
+                )
+                view.graph.addSeries(series)
+               // view.graph.gridLabelRenderer.labelFormatter = DateAsXAxisLabelFormatter(activity);
+                view.graph.gridLabelRenderer.numHorizontalLabels = 5; // only 4 because of the space
 
 // set manual x bounds to have nice steps
-        view.graph.viewport.setMinX(datearray[0].time.toDouble());
-        view.graph.viewport.setMaxX(datearray[2].time.toDouble());
-        view.graph.viewport.isXAxisBoundsManual = true;
+                view.graph.viewport.setMinX(0.0);
+                view.graph.viewport.setMaxX(4.0);
+                view.graph.viewport.isXAxisBoundsManual = true;
 
 // as we use dates as labels, the human rounding to nice readable numbers
 // is not necessary
-        view.graph.gridLabelRenderer.setHumanRounding(false);
+                //view.graph.gridLabelRenderer.setHumanRounding(false);
 
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d("firing ", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        ref.addValueEventListener(postListener)
         return view
     }
     fun gmtFormat(dateP : String?) : Date{
